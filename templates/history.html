@@ -1,0 +1,54 @@
+<!-- templates/history.html -->
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<h1>Portfolio History</h1>
+<h2>Daily Changes</h2>
+<table>
+    <tr><th>Date</th><th>1-Day % Change</th></tr>
+    {% for d in days %}
+    <tr><td>{{ d.day }}</td><td>{{ d.change | round(2) }}%</td></tr>
+    {% endfor %}
+</table>
+<h2>Portfolio Value Trend</h2>
+<canvas id="valueChart" width="400" height="200"></canvas>
+<h2>Transactions</h2>
+<table>
+    <tr><th>Date</th><th>Action</th><th>Symbol</th><th>Amount</th><th>Price</th><th>Total Value</th><th>Commission</th></tr>
+    {% for tx in transactions %}
+    <tr>
+        <td>{{ tx.datetime | datetimeformat }}</td>
+        <td>{{ tx.action | replace('sell_cover', 'Sell / Cover Short') | replace('stop_loss', 'Stop loss') | replace('stop_profit', 'Stop profit') | replace('buy', 'Buy') | replace('short', 'Short') }}</td>
+        <td>{{ tx.symbol }}</td>
+        <td>{{ tx.amount }}</td>
+        <td>${{ tx.price | round(2) }}</td>
+        <td>${{ (tx.amount * tx.price) | round(2) }}</td>
+        <td>${{ tx.commission | round(2) if 'commission' in tx else 0 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script>
+    const ctx = document.getElementById('valueChart').getContext('2d');
+    const dates = {{ days_chart | tojson }};
+    const values = {{ values_chart | tojson }};
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Portfolio Value',
+                data: values,
+                borderColor: 'green',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: { type: 'time' }
+            }
+        }
+    });
+</script>
+{% endblock %}

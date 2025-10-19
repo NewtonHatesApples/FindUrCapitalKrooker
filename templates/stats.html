@@ -1,0 +1,42 @@
+<!-- templates/stats.html -->
+{% extends "base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+<h1>{{ name }} ({{ symbol }})</h1>
+<p>Current Price: ${{ price | round(2) }}</p>
+<div>
+    <button onclick="updateChart('1y')">1Y</button>
+    <button onclick="updateChart('6m')">6M</button>
+    <button onclick="updateChart('3m')">3M</button>
+    <button onclick="updateChart('1m')">1M</button>
+    <button onclick="updateChart('7d')">7D</button>
+    <button onclick="updateChart('1d')">1D</button>
+    <button onclick="updateChart(currentPeriod)">Refresh</button>
+</div>
+<canvas id="chart" width="400" height="200"></canvas>
+<form method="post" action="/buy/{{ symbol }}">
+    <input type="number" name="amount" placeholder="Amount to buy" min="1" step="1" required>
+    <input type="number" name="stop_loss" placeholder="Stop loss (optional)" step="any">
+    <input type="number" name="stop_profit" placeholder="Stop profit (optional)" step="any">
+    <button type="submit">Buy</button>
+</form>
+<form method="post" action="/short/{{ symbol }}">
+    <input type="number" name="amount" placeholder="Amount to short" min="1" step="1" required>
+    <input type="number" name="stop_loss" placeholder="Stop loss (optional)" step="any">
+    <input type="number" name="stop_profit" placeholder="Stop profit (optional)" step="any">
+    <button type="submit">Short</button>
+</form>
+<form method="post" action="/sell_cover/{{ symbol }}">
+    <input type="number" name="amount" placeholder="Amount to sell/cover" min="1" step="1" required>
+    <button type="submit">Sell / Cover Short</button>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+    const symbol = '{{ symbol }}';
+    let chart;
+    let currentPeriod = '1y';
+    updateChart(currentPeriod);
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+/* static/style.css */
+body { font-family: Arial, sans-serif; }
+header { display: flex; justify-content: space-between; }
+.flashes { color: red; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid black; padding: 5px; }

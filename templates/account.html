@@ -1,0 +1,24 @@
+<!-- templates/account.html -->
+{% extends "base.html" %}
+{% block title %}Account{% endblock %}
+{% block content %}
+<h1>Your Portfolio</h1>
+<p>Balance: ${{ balance | round(2) }}</p>
+<table>
+    <tr><th>Asset</th><th>Amount</th><th>Price</th><th>Value</th><th>Action</th><th>% Change</th></tr>
+    {% for data in asset_values %}
+    <tr>
+        <td><a href="/stats/{{ data.symbol }}">{{ data.name }} ({{ data.symbol }})</a></td>
+        <td>{{ data.amount }}</td>
+        <td>${{ data.price | round(2) }}</td>
+        <td>${{ data.value | round(2) }}</td>
+        <td>{{ data.action }}</td>
+        <td>{{ data.percent_change | round(2) }}%</td>
+    </tr>
+    {% endfor %}
+</table>
+<p>Total Value: ${{ total_value | round(2) }}</p>
+<p>Change from Initial: {{ percent_change | round(2) }}%</p>
+<p>1-Day Change: {{ day_percent_change | round(2) }}%</p>
+<a href="/account/history"><button>Account history</button></a>
+{% endblock %}

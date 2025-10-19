@@ -1,0 +1,33 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% if session.username %}
+    <header>
+        <a href="/account"><button>My account</button></a>
+        <a href="/logout"><button>Logout</button></a>
+        <form action="/search" method="post">
+            <input type="text" name="query" placeholder="Search assets">
+            <button type="submit">Search</button>
+        </form>
+    </header>
+    {% endif %}
+    <main>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

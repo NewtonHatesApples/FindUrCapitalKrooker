@@ -1,4 +1,3 @@
-<!-- templates/history.html -->
 {% extends "base.html" %}
 {% block title %}History{% endblock %}
 {% block content %}
@@ -14,7 +13,17 @@
 <canvas id="valueChart" width="400" height="200"></canvas>
 <h2>Transactions</h2>
 <table>
-    <tr><th>Date</th><th>Action</th><th>Symbol</th><th>Amount</th><th>Price</th><th>Total Value</th><th>Commission</th></tr>
+    <tr>
+        <th>Date</th>
+        <th>Action</th>
+        <th>Symbol</th>
+        <th>Amount</th>
+        <th>Price</th>
+        <th>Total Value</th>
+        <th>Commission</th>
+        <th>Stop Loss</th>
+        <th>Stop Profit</th>
+    </tr>
     {% for tx in transactions %}
     <tr>
         <td>{{ tx.datetime | datetimeformat }}</td>
@@ -24,6 +33,10 @@
         <td>${{ tx.price | round(2) }}</td>
         <td>${{ (tx.amount * tx.price) | round(2) }}</td>
         <td>${{ tx.commission | round(2) if 'commission' in tx else 0 }}</td>
+        <td>{% if 'stop_loss' in tx %}{% if tx.stop_loss is not none %}${{ tx.stop_loss | round(2) }}{% else %}
+            N/A{% endif %}{% else %}N/A{% endif %}</td>
+        <td>{% if 'stop_profit' in tx %}{% if tx.stop_profit is not none %}${{ tx.stop_profit | round(2) }}{% else %}
+            N/A{% endif %}{% else %}N/A{% endif %}</td>
     </tr>
     {% endfor %}
 </table>

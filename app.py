@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, request, redirect, session, jsonify, flash
 from functools import wraps
 import os
@@ -151,7 +150,8 @@ def perform_auto_close(username, typ, symbol, price, action_type, dt=None):
     else:
         user['current_balance'] += amount * (2 * pos['avg_price'] - price) - commission
     del user['portfolio'][typ][symbol]
-    tx = {'datetime': dt.isoformat(), 'action': action_type, 'symbol': symbol, 'amount': amount, 'price': price, 'commission': commission}
+    tx = {'datetime': dt.isoformat(), 'action': action_type, 'symbol': symbol, 'amount': amount, 'price': price,
+          'commission': commission, 'stop_loss': pos.get('stop_loss'), 'stop_profit': pos.get('stop_profit')}
     user['transactions'].append(tx)
     save_user(username, user)
 
@@ -282,7 +282,7 @@ def get_portfolio_value_at_date(username, target_date):
         am = tx['amount']
         pr = tx['price']
         act = tx['action']
-        comm = am * pr * commission_rate
+        comm = tx.get('commission', am * pr * commission_rate)
         if act == 'buy':
             if symbol in long:
                 old_am = long[symbol]['amount']
@@ -454,7 +454,8 @@ def buy(symbol):
         user['portfolio']['long'][symbol] = {'amount': amount, 'avg_price': price}
     user['portfolio']['long'][symbol]['stop_loss'] = stop_loss
     user['portfolio']['long'][symbol]['stop_profit'] = stop_profit
-    tx = {'datetime': datetime.datetime.now().isoformat(), 'action': 'buy', 'symbol': symbol, 'amount': amount, 'price': price, 'commission': commission}
+    tx = {'datetime': datetime.datetime.now().isoformat(), 'action': 'buy', 'symbol': symbol, 'amount': amount,
+          'price': price, 'commission': commission, 'stop_loss': stop_loss, 'stop_profit': stop_profit}
     user['transactions'].append(tx)
     save_user(username, user)
     flash("Buy successful.")
@@ -497,7 +498,8 @@ def short(symbol):
         user['portfolio']['short'][symbol] = {'amount': amount, 'avg_price': price}
     user['portfolio']['short'][symbol]['stop_loss'] = stop_loss
     user['portfolio']['short'][symbol]['stop_profit'] = stop_profit
-    tx = {'datetime': datetime.datetime.now().isoformat(), 'action': 'short', 'symbol': symbol, 'amount': amount, 'price': price, 'commission': commission}
+    tx = {'datetime': datetime.datetime.now().isoformat(), 'action': 'short', 'symbol': symbol, 'amount': amount,
+          'price': price, 'commission': commission, 'stop_loss': stop_loss, 'stop_profit': stop_profit}
     user['transactions'].append(tx)
     save_user(username, user)
     flash("Short successful.")
@@ -544,7 +546,8 @@ def sell_cover(symbol):
         flash("No position to sell/cover.")
         return redirect(f'/stats/{symbol}')
     user['current_balance'] += revenue - commission
-    tx = {'datetime': datetime.datetime.now().isoformat(), 'action': 'sell_cover', 'symbol': symbol, 'amount': amount, 'price': price, 'commission': commission}
+    tx = {'datetime': datetime.datetime.now().isoformat(), 'action': 'sell_cover', 'symbol': symbol, 'amount': amount,
+          'price': price, 'commission': commission, 'stop_loss': None, 'stop_profit': None}
     user['transactions'].append(tx)
     save_user(username, user)
     flash("Sell/Cover successful.")

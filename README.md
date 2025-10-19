@@ -7,13 +7,15 @@ Clone the repository:
 ```bash
 git clone https://github.com/NewtonHatesApples/FindUrCapitalKrooker.git
 ```
-
+```bash
+cd FindUrCapitalKrooker
+```
 Install required Python packages:
 
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 ## Run the server
 ```bash
-python3 app.py
+python app.py
 ```

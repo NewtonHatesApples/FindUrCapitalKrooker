@@ -4,10 +4,16 @@ FindUrCapitalKrooker (FUCK) is a simple paper trading platform which can run on 
 ## Download everything you need
 Clone the repository:
 
-`git clone https://github.com/NewtonHatesApples/FindUrCapitalKrooker.git`
+```bash
+git clone https://github.com/NewtonHatesApples/FindUrCapitalKrooker.git
+```
 
 Install required Python packages:
 
-`pip install requirements.txt`
+```bash
+pip install requirements.txt
+```
 ## Run the server
-`python3 app.py`
+```bash
+python3 app.py
+```
